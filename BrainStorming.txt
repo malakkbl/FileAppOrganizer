@@ -1,0 +1,12 @@
+Idea : a file organizer with built-in security features.
+
+1-Sign up / log in at first .
+2-Allow users to define their own rules for organizing files.(ext or topic)
+3-if topic , give names of folders.
+4-Duplicate File Detection.
+5-Version Control.
+6- Delete and add features .
+7-Change file's name.
+
+LIBRARIES :
+PyQt5

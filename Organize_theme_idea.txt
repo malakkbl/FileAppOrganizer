@@ -1,0 +1,23 @@
+L'utilisateur va donner les themes
+
+TRAITEMENT SUR TEXTE : 
+* effectuer la lemmatisation : cad reduire les mots à leur forme de base et supprimer les mots courants ( le , et , la ,....)
+* les mots clés pour chaque theme : utiliser TF-IDF pour identifier les mots ou phrases les plus importants pour chaque theme
+--> pour chaque theme : theme={nom du theme:[les mots clés trouvés auparavant]}
+* scoring des documents : document --> {theme:score,.....}
+* determiner un seuil d'attribution : si le score le plus élevé d'un document est inferieur à un certain seuil , il sera placé dans un dossier "autre"
+
+TRANSFORMER D'AUTRES --> TEXTE :
+* Fichiers Texte (.txt, .docx, .pdf, etc.) :
+.txt directement.
+.docx utilisez la bibliothèque python-docx.
+.pdf utilisez PyMuPDF (aussi connu sous le nom de fitz).
+* Images (.jpeg, .png, etc.) :
+Utilisez la bibliothèque pytesseract avec Tesseract-OCR pour extraire le texte des images. ( particulièrement utile pour les images contenant du texte scanné.)
+* Vidéos :
+video --> audio en utilisant des outils comme ffmpeg.
+* Audios (.mp3, .wav, etc.) :
+audio --> texte en utilisant Google Cloud Speech-to-Text
+* Autres :
+Pour les fichiers de type présentation (.ppt, .pptx), vous pouvez utiliser python-pptx.
+Pour les fichiers Excel (.xls, .xlsx), utilisez pandas ou openpyxl.
