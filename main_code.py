@@ -32,6 +32,8 @@ import pytesseract
 from PIL import Image
 
 # score + move functions :
+import string
+from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -330,9 +332,26 @@ class FileOrganizerApp(QWidget):
             if os.path.exists(wav_audio_path):
                 os.remove(wav_audio_path)
 
+    def preprocess_text(self, document: str):
+        # Remove punctuation
+        text = text.translate(str.maketrans("", "", string.punctuation))
+
+        # Remove common stop words
+        stop_words = set(stopwords.words("english"))
+        words = text.split()
+        meaningful_words = [word for word in words if word.lower() not in stop_words]
+
+        # Join meaningful words back into a string
+        preprocessed_text = " ".join(meaningful_words)
+
+        return preprocessed_text
+
     def calculate_score(self, document: str, keywords: list) -> float:
-        # Combine document text and keywords for TF-IDF calculation
-        text_and_keywords = [document] + keywords
+        # Preprocess text
+        preprocessed_text = preprocess_text(document)
+
+        # Combine preprocessed text and keywords into a list
+        text_and_keywords = [preprocessed_text] + keywords
 
         # Create a TF-IDF vectorizer
         vectorizer = TfidfVectorizer()
@@ -340,10 +359,10 @@ class FileOrganizerApp(QWidget):
         # Fit and transform the text and keywords
         tfidf_matrix = vectorizer.fit_transform(text_and_keywords)
 
-        # Calculate cosine similarity between the document and keywords
+        # Calculate cosine similarity between the preprocessed text and keywords
         similarity_matrix = cosine_similarity(tfidf_matrix)
 
-        # The similarity score is the value at (0, 1) since 0 is the document and 1 is the keywords
+        # The similarity score is the value at (0, 1) since 0 is the preprocessed text and 1 is the keywords
         similarity_score = similarity_matrix[0, 1]
 
         return similarity_score
