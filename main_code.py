@@ -62,21 +62,6 @@ class FileOrganizerApp(QWidget):
         self.add_theme_button = QPushButton("Add Theme")
         self.add_theme_button.setHidden(True)
 
-        # New widget for version list
-        self.version_list = QListWidget()
-
-        # Add version list widget to layouts
-        main_layout.addWidget(self.info_label)
-        main_layout.addWidget(self.folder_label)
-        main_layout.addWidget(self.folder_path)
-        main_layout.addLayout(top_layout)
-        main_layout.addWidget(self.organize_button)
-        main_layout.addWidget(self.version_list)  # Add version list widget
-
-        # Configure widgets
-        self.folder_path.setReadOnly(True)
-        self.theme_input.setPlaceholderText("Enter themes, separated by commas")
-
         # Add widgets to layouts
         top_layout.addWidget(self.theme_radio)
         top_layout.addWidget(self.extension_radio)
@@ -92,6 +77,10 @@ class FileOrganizerApp(QWidget):
 
         # Set main layout
         self.setLayout(main_layout)
+
+        # Configure widgets
+        self.folder_path.setReadOnly(True)
+        self.theme_input.setPlaceholderText("Enter themes, separated by commas")
 
         # Connect signals to slots
         self.browse_button.clicked.connect(self.select_folder)
@@ -134,14 +123,13 @@ class FileOrganizerApp(QWidget):
             self.organize_by_extension(folder_path)
 
         if self.theme_radio.isChecked():
-            user_entered_themes = [theme.strip() for theme in self.current_theme.split(",")]
+            user_entered_themes = [
+                theme.strip() for theme in self.current_theme.split(",")
+            ]
             self.organize_by_theme(folder_path, user_entered_themes)
 
-        # Remove empty folders before committing changes
+        # Remove empty folders after organizing files
         self.remove_empty_folders(folder_path)
-
-        # Update the version list
-        self.update_version_list(folder_path)
 
         self.info_label.setText(f"Files in {folder_path} organized!")
 
@@ -248,18 +236,27 @@ class FileOrganizerApp(QWidget):
                 doc = text
 
         # IMAGE FILES (JPEG) using Tesseract OCR:
-        elif file_extension == ".jpg" or file_extension == ".jpeg":
+        elif (
+            file_extension == ".jpg"
+            or file_extension == ".jpeg"
+            or file_extension == ".webp"
+        ):
+            # Set the path to Tesseract executable (replace with your actual path)
+            pytesseract.pytesseract.tesseract_cmd = (
+                r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+            )
             try:
                 # Load the image
                 img = Image.open(filepath)
 
                 # Use Tesseract to perform OCR on the image
+
                 doc = pytesseract.image_to_string(img)
 
             except FileNotFoundError as e:
-                return f"File not found error: {e}"
+                print(f"File not found error: {e}")
             except Exception as ex:
-                return f"Error occurred: {ex}"
+                print(f"Error occurred: {ex}")
 
         # VIDEO FILES:
         elif file_extension == ".mp4":
@@ -345,8 +342,6 @@ class FileOrganizerApp(QWidget):
             shutil.move(filepath, dest_path)
         except Exception as e:
             print(f"Error moving file to {folder_name}: {e}")
-
-
 
 
 if __name__ == "__main__":
