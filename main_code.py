@@ -113,6 +113,31 @@ class FileOrganizerApp(QWidget):
                 if not os.listdir(dir_path):
                     os.rmdir(dir_path)
 
+    def organize_files_recursive(self, folder_path, themes):
+        documents_as_text = {}
+
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                filepath = os.path.join(root, file)
+                documents_as_text[filepath] = self.file_to_text(filepath)
+
+        document_scores = {}
+
+        for filepath, file_text in documents_as_text.items():
+            scores = {}
+            for theme, keywords in theme_keywords.items():
+                scores[theme] = self.calculate_score(file_text, keywords)
+            document_scores[filepath] = scores
+
+        seuil = 0.1
+        for filepath, scores in document_scores.items():
+            max_score_theme = max(scores, key=scores.get)
+            if scores[max_score_theme] < seuil:
+                self.move_file_to_folder(filepath, "autre")
+            else:
+                self.move_file_to_folder(filepath, max_score_theme)
+
+
     def organize_files(self):
         folder_path = self.folder_path.text()
 
@@ -126,7 +151,7 @@ class FileOrganizerApp(QWidget):
             user_entered_themes = [
                 theme.strip() for theme in self.current_theme.split(",")
             ]
-            self.organize_by_theme(folder_path, user_entered_themes)
+            self.organize_files_recursive(folder_path, user_entered_themes)
 
         # Remove empty folders after organizing files
         self.remove_empty_folders(folder_path)
@@ -152,6 +177,7 @@ class FileOrganizerApp(QWidget):
 
             extension_start = file_path.rfind(".")
             filename_start = file_path.rfind(os.sep) + 1
+            
 
             if extension_start != -1:
                 file_extension = file_path[extension_start + 1 :].lower()
