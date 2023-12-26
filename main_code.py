@@ -73,9 +73,6 @@ class FileOrganizerApp(QWidget):
         main_layout.addWidget(self.organize_button)
         main_layout.addWidget(self.version_list)  # Add version list widget
 
-        # Set main layout
-        self.setLayout(main_layout)
-
         # Configure widgets
         self.folder_path.setReadOnly(True)
         self.theme_input.setPlaceholderText("Enter themes, separated by commas")
@@ -133,29 +130,20 @@ class FileOrganizerApp(QWidget):
         if not folder_path:
             return
 
-        # Check Git repo initialization
-        if not os.path.exists(os.path.join(folder_path, ".git")):
-            subprocess.run(["git", "init"], cwd=folder_path)
-
         if self.extension_radio.isChecked():
             self.organize_by_extension(folder_path)
 
         if self.theme_radio.isChecked():
-            user_entered_themes = [
-                theme.strip() for theme in self.current_theme.split(",")
-            ]
+            user_entered_themes = [theme.strip() for theme in self.current_theme.split(",")]
             self.organize_by_theme(folder_path, user_entered_themes)
 
         # Remove empty folders before committing changes
         self.remove_empty_folders(folder_path)
 
-        # Commit changes
-        subprocess.run(["git", "add", "."], cwd=folder_path)
-        subprocess.run(["git", "commit", "-m", "Organized files"], cwd=folder_path)
-
+        # Update the version list
         self.update_version_list(folder_path)
-        self.info_label.setText(f"Files in {folder_path} organized!")
 
+        self.info_label.setText(f"Files in {folder_path} organized!")
 
     def list_files(self, dir_path):
         r = []
@@ -358,18 +346,7 @@ class FileOrganizerApp(QWidget):
         except Exception as e:
             print(f"Error moving file to {folder_name}: {e}")
 
-    def update_version_list(self, folder_path):
-        self.version_list.clear()
-        commit_logs = subprocess.run(
-            ["git", "log", "--oneline"], cwd=folder_path, capture_output=True, text=True
-        )
-        commits = commit_logs.stdout.strip().split("\n")
 
-        for index, commit in enumerate(commits, 1):
-            version_number = len(commits) - index + 1
-            version_name = f"Version {version_number}: {commit.split(' ', 1)[1]}"
-            item = QListWidgetItem(version_name)
-            self.version_list.addItem(item)
 
 
 if __name__ == "__main__":
