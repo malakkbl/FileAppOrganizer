@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
     QPlainTextEdit,
 )
 import subprocess
+from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 
 # File to text :
 import os
@@ -61,6 +62,20 @@ class FileOrganizerApp(QWidget):
         self.add_theme_button = QPushButton("Add Theme")
         self.add_theme_button.setHidden(True)
 
+        # New widget for version list
+        self.version_list = QListWidget()
+
+        # Add version list widget to layouts
+        main_layout.addWidget(self.info_label)
+        main_layout.addWidget(self.folder_label)
+        main_layout.addWidget(self.folder_path)
+        main_layout.addLayout(top_layout)
+        main_layout.addWidget(self.organize_button)
+        main_layout.addWidget(self.version_list)  # Add version list widget
+
+        # Set main layout
+        self.setLayout(main_layout)
+
         # Configure widgets
         self.folder_path.setReadOnly(True)
         self.theme_input.setPlaceholderText("Enter themes, separated by commas")
@@ -106,12 +121,12 @@ class FileOrganizerApp(QWidget):
             self.folder_path.setText(folder_path)
 
     def remove_empty_folders(self, folder_path):
-            for root, dirs, files in os.walk(folder_path, topdown=False):
-                for dir_name in dirs:
-                    dir_path = os.path.join(root, dir_name)
-                    if not os.listdir(dir_path):
-                        os.rmdir(dir_path)
-                    
+        for root, dirs, files in os.walk(folder_path, topdown=False):
+            for dir_name in dirs:
+                dir_path = os.path.join(root, dir_name)
+                if not os.listdir(dir_path):
+                    os.rmdir(dir_path)
+
     def organize_files(self):
         folder_path = self.folder_path.text()
 
@@ -126,8 +141,13 @@ class FileOrganizerApp(QWidget):
             self.organize_by_extension(folder_path)
 
         if self.theme_radio.isChecked():
-            user_entered_themes = [theme.strip() for theme in self.current_theme.split(",")]
+            user_entered_themes = [
+                theme.strip() for theme in self.current_theme.split(",")
+            ]
             self.organize_by_theme(folder_path, user_entered_themes)
+
+        # Remove empty folders before committing changes
+        self.remove_empty_folders(folder_path)
 
         # Commit changes
         subprocess.run(["git", "add", "."], cwd=folder_path)
@@ -136,9 +156,7 @@ class FileOrganizerApp(QWidget):
         self.update_version_list(folder_path)
         self.info_label.setText(f"Files in {folder_path} organized!")
 
-        # Remove empty folders
-        self.remove_empty_folders(folder_path)
-        
+
     def list_files(self, dir_path):
         r = []
         for name in os.listdir(dir_path):
@@ -182,7 +200,7 @@ class FileOrganizerApp(QWidget):
             os.rename(file_path, dest_file_path)
 
     def organize_by_theme(self, folder_path, themes: list):
-        print("THEMES:",themes)
+        print("THEMES:", themes)
         # 1. Transformer chaque fichier en texte
         documents_as_text = {}
         for root, dirs, files in os.walk(folder_path):
@@ -199,12 +217,12 @@ class FileOrganizerApp(QWidget):
             for theme, keywords in theme_keywords.items():
                 scores[theme] = self.calculate_score(file_text, keywords)
             document_scores[filepath] = scores
-            
-        print("DOCUMENT_SCORES:",document_scores)
+
+        print("DOCUMENT_SCORES:", document_scores)
         # 4. Organiser les fichiers basés sur le score le plus élevé et un seuil d'attribution
         seuil = 0.1
         for filepath, scores in document_scores.items():
-            print("FILEPATH:",filepath)
+            print("FILEPATH:", filepath)
             max_score_theme = max(scores, key=scores.get)
             if scores[max_score_theme] < seuil:
                 # Déplacez le fichier dans le dossier "autre"
@@ -272,7 +290,6 @@ class FileOrganizerApp(QWidget):
             doc = doc.lower()
 
         return doc
-
 
     def audio_to_text(self, audio_path):
         try:
