@@ -33,6 +33,8 @@ from PIL import Image
 
 # score + move functions :
 import string
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -334,7 +336,7 @@ class FileOrganizerApp(QWidget):
 
     def preprocess_text(self, document: str):
         # Remove punctuation
-        text = text.translate(str.maketrans("", "", string.punctuation))
+        text = document.translate(str.maketrans("", "", string.punctuation))
 
         # Remove common stop words
         stop_words = set(stopwords.words("english"))
@@ -348,7 +350,7 @@ class FileOrganizerApp(QWidget):
 
     def calculate_score(self, document: str, keywords: list) -> float:
         # Preprocess text
-        preprocessed_text = preprocess_text(document)
+        preprocessed_text = self.preprocess_text(document)
 
         # Combine preprocessed text and keywords into a list
         text_and_keywords = [preprocessed_text] + keywords
