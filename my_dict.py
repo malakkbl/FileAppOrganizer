@@ -1,17 +1,11 @@
 travel_words = [
-    "Journey", "Voyage", "Expedition", "Tour", "Adventure", "Trip", "Excursion", "Exploration", 
-    "Trek", "Pilgrimage", "Jaunt", "Safari", "Sojourn", "Odyssey", "Ramble", "Roam", "Wander", 
-    "Hike", "Trekking", "Tourism", "Globetrotting", "Cruise", "Cruising", "Getaway", "Vacation", 
-    "Holiday", "Escape", "Retreat", "Excursion", "Outing", "Jaunt", "Explore", "Discover", "Visit", 
-    "Tourist", "Traveler", "Nomad", "Backpacker", "Wanderlust", "Itinerary", "Destination", 
-    "Passport", "Boarding pass", "Ticket", "Luggage", "Baggage", "Suitcase", "Backpack", 
-    "Guidebook", "Map", "Compass", "Camera", "Sightseeing", "Jet lag", "Layover", "Sunset", 
-    "Sunrise", "Airport", "Hotel", "Resort", "Hostel", "Motel", "Accommodation", "Camping", 
-    "Campsite", "Tent", "Campfire", "Route", "Highway", "Road trip", "Train", "Bus", 
-    "Airplane", "Cabin", "Countryside", "Cityscape", "Landscape", "Culture", "Tradition", 
-    "Heritage", "Local cuisine", "Street food", "Market", "Souvenir", "Beach", "Mountain", 
-    "Ocean", "Desert", "Forest", "Island", "Valley", "Hill", "Lake", "River", "Waterfall", 
-    "Canyon", "Cultural exchange", "Language barrier", "Native", "Foreign"
+     "tourism", "travel", "leisure", "business", "VFR", "holidays", "short breaks", "city breaks",
+    "business meetings", "conferences", "conventions", "trade fairs", "health and fitness", "sports tourism",
+    "educational tourism", "adventure", "culture and heritage", "sightseeing", "relaxing", "trekking", "shopping",
+    "dining", "cultural experiences", "beach stays", "city tours", "nature exploration", "historical tours",
+    "airlines", "ferries", "rail travel", "car hire", "cruises", "hotels", "B&Bs", "hostels", "resorts", "serviced accommodation",
+    "self-catering", "tour operators", "travel agencies", "attractions", "catering facilities", "guiding services",
+    "wanderlust", "sunlust", "economic impact", "social impact", "cultural impact", "environmental impact"
 ]
 
 programming_words = [
@@ -30,7 +24,26 @@ programming_words = [
     "Concurrency", "Parallelism", "Asynchronous", "Synchronous", "Thread", "Process", 
     "Data Structure", "Algorithm", "Big O Notation", "Recursion", "Sorting", "Searching", 
     "Linked List", "Tree", "Graph", "Stack", "Queue", "Hash Table", "Binary", "Bitwise","range", 
-    "Regular Expression", "Machine Learning", "Artificial Intelligence", "Neural Network"
+    "Regular Expression", "Machine Learning", "Artificial Intelligence", "Neural Network","python","programming","artificial","data","implementation",
+    "gaming","scientific","loops","programmi","software","® python", "Intelligence",
+    "Artificial Intelligence (AI)",
+    "Machine Learning (ML)",
+    "Deep Learning",
+    "Autonomous systems",
+    "Supervised learning",
+    "Unsupervised learning",
+    "Reinforcement learning",
+    "Algorithm",
+    "Narrow AI",
+    "Human-level AI (AGI)",
+    "Human-Centered AI",
+    "John McCarthy",
+    "Autonomous navigation",
+    "Neural networks",
+    "Context-aware machines",
+    "Human-robot interaction",
+    "Societal needs",
+    "Software 2.0"
 ]
 
 family_words = [
