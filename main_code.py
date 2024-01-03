@@ -1,4 +1,5 @@
 import sys
+
 import os
 from PyQt5.QtWidgets import (
     QApplication,
@@ -61,7 +62,11 @@ class FileOrganizerApp(QWidget):
         self.organize_button = QPushButton("Organize Files")
 
         # New widgets for theme input
+        
+        
         self.theme_input = QPlainTextEdit()
+        
+        
         self.theme_input.setHidden(True)
         self.add_theme_button = QPushButton("Add Theme")
         self.add_theme_button.setHidden(True)
@@ -129,7 +134,9 @@ class FileOrganizerApp(QWidget):
 
         for filepath, file_text in documents_as_text.items():
             scores = {}
-            for theme, keywords in theme_keywords.items():
+            for theme in themes.split(","):
+                theme = theme.strip()
+                keywords = theme_keywords.get(theme, [])
                 scores[theme] = self.calculate_score(file_text, keywords)
             document_scores[filepath] = scores
 
@@ -141,7 +148,7 @@ class FileOrganizerApp(QWidget):
             else:
                 self.move_file_to_folder(filepath, max_score_theme)
 
-
+                
     def organize_files(self):
         folder_path = self.folder_path.text()
 
@@ -155,7 +162,7 @@ class FileOrganizerApp(QWidget):
             user_entered_themes = [
                 theme.strip() for theme in self.current_theme.split(",")
             ]
-            self.organize_files_recursive(folder_path, user_entered_themes)
+            self.organize_files_recursive(folder_path, self.current_theme)
 
         # Remove empty folders after organizing files
         self.remove_empty_folders(folder_path)
@@ -224,11 +231,9 @@ class FileOrganizerApp(QWidget):
                 scores[theme] = self.calculate_score(file_text, keywords)
             document_scores[filepath] = scores
 
-        print("DOCUMENT_SCORES:", document_scores)
         # 4. Organiser les fichiers basés sur le score le plus élevé et un seuil d'attribution
         seuil = 0.1
         for filepath, scores in document_scores.items():
-            print("FILEPATH:", filepath)
             max_score_theme = max(scores, key=scores.get)
             if scores[max_score_theme] < seuil:
                 # Déplacez le fichier dans le dossier "autre"
@@ -240,6 +245,7 @@ class FileOrganizerApp(QWidget):
     # FONCTIONS UTILISEES :
 
     def file_to_text(self, filepath) -> str:
+        
         # Initialize doc as an empty string
         doc = ""
 
