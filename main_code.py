@@ -35,13 +35,20 @@ from PIL import Image
 # score + move functions :
 import string
 import nltk
-nltk.download('stopwords')
+
+from generate_keywords import generate_related_keywords
+
+nltk.download("stopwords")
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from my_dict import theme_keywords
 
+import nltk
+nltk.download('wordnet')
+
+from nltk.corpus import wordnet
 
 class FileOrganizerApp(QWidget):
     def __init__(self):
@@ -62,11 +69,9 @@ class FileOrganizerApp(QWidget):
         self.organize_button = QPushButton("Organize Files")
 
         # New widgets for theme input
-        
-        
+
         self.theme_input = QPlainTextEdit()
-        
-        
+
         self.theme_input.setHidden(True)
         self.add_theme_button = QPushButton("Add Theme")
         self.add_theme_button.setHidden(True)
@@ -148,7 +153,6 @@ class FileOrganizerApp(QWidget):
             else:
                 self.move_file_to_folder(filepath, max_score_theme)
 
-                
     def organize_files(self):
         folder_path = self.folder_path.text()
 
@@ -188,7 +192,6 @@ class FileOrganizerApp(QWidget):
 
             extension_start = file_path.rfind(".")
             filename_start = file_path.rfind(os.sep) + 1
-            
 
             if extension_start != -1:
                 file_extension = file_path[extension_start + 1 :].lower()
@@ -212,27 +215,28 @@ class FileOrganizerApp(QWidget):
 
             os.rename(file_path, dest_file_path)
 
+
     def organize_by_theme(self, folder_path, themes: list):
-        print("THEMES:", themes)
-        # 1. Transformer chaque fichier en texte
+        # Transformer chaque fichier en texte
         documents_as_text = {}
         for root, dirs, files in os.walk(folder_path):
             for file in files:
                 filepath = os.path.join(root, file)
-                documents_as_text[filepath] = self.file_to_text(
-                    filepath
-                )  # file_to_text : Une fonction pour convertir un fichier en texte
+                documents_as_text[filepath] = self.file_to_text(filepath)
+                # file_to_text : Une fonction pour convertir un fichier en texte
 
-        # 3. Scoring des documents par rapport à chaque thème
+        # Scoring des documents par rapport à chaque thème
         document_scores = {}
         for filepath, file_text in documents_as_text.items():
             scores = {}
             for theme, keywords in theme_keywords.items():
                 scores[theme] = self.calculate_score(file_text, keywords)
             document_scores[filepath] = scores
+            # calculate_score : Une fonction qui évalue la similarité
+            # entre le texte du document et les mots-clés associés à chaque thème
 
-        # 4. Organiser les fichiers basés sur le score le plus élevé et un seuil d'attribution
-        seuil = 0.1
+        # Organiser les fichiers basés sur le score le plus élevé et un seuil d'attribution
+        seuil = 0.5
         for filepath, scores in document_scores.items():
             max_score_theme = max(scores, key=scores.get)
             if scores[max_score_theme] < seuil:
@@ -245,7 +249,6 @@ class FileOrganizerApp(QWidget):
     # FONCTIONS UTILISEES :
 
     def file_to_text(self, filepath) -> str:
-        
         # Initialize doc as an empty string
         doc = ""
 
